@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>myHOApay</title>
+	<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="./resources/css/style.css" />
+	<link rel="stylesheet" href="./resources/font/flaticon.css" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+	<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+	<script type="text/javascript" src="//cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+	<script type="text/javascript" src="./resources/js/common.js"></script>
+	<script type="text/javascript" src="./resources/js/make_payment.js"></script>
+</head>
+<body ng-app="paymentPage">
+	<header>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-8">
+					<img src="./resources/img/myHOApay_white_letters.png" width="100%" />
+				</div>
+			</div>
+		</div>
+	</header>
+	<main>
+		<div class="container">
+			<nav>
+                <div class="row text-center">
+                    <div class="col-sm-4 active">
+                        <a href="./index.html"><i class="flaticon-commerce"></i>&nbsp;&nbsp;&nbsp;MAKE A PAYMENT</a>
+                        <img src="./resources/img/arrow-down.png" />
+                    </div>
+                    <div class="col-sm-4">
+                        <a href="./paymentPlan.html"><i class="flaticon-school"></i>&nbsp;&nbsp;&nbsp;SET UP PAYMENT PLAN</a>
+                    </div>
+                    <div class="col-sm-4">
+                        <a href="./autoPay.html"><i class="flaticon-clock"></i>&nbsp;&nbsp;&nbsp;MANAGE AUTOPAY</a>
+                    </div>
+
+                </div>
+                <!--<ul class="clearfix navigator">
+					<li class="active">
+						<a href="./index.html"><i class="flaticon-commerce"></i>&nbsp;&nbsp;&nbsp;MAKE A PAYMENT</a>
+						<img src="./resources/img/arrow-down.png" />
+					</li>
+					<li>
+						<a href="./autoPay.html"><i class="flaticon-clock"></i>&nbsp;&nbsp;&nbsp;MANAGE AUTOPAY</a>
+					</li>
+					<li>
+						<a href="./paymentPlan.html"><i class="flaticon-school"></i>&nbsp;&nbsp;&nbsp;SET UP PAYMENT PLAN</a>
+					</li>
+				</ul>-->
+			</nav>
+			<div class="wrap" ng-controller='makePayment'>
+				<div class="row">
+                    <!-- Payment Summary -->
+                    <div class="payment-summary col-sm-12" ng-hide="paymentSuccess">
+                        <div class="summary-title full-wid">
+                            <h4>Payment Summary</h4>
+                        </div>
+                        <div id="summary-table" class="summary-content clearfix">
+                            <div class="col-md-10 col-md-offset-1">
+                                <table class="full-wid">
+                                <tr>
+                                    <th>
+                                        Description
+                                    </th>
+                                    <th>
+                                        Amount
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {{form_data.description}}
+                                    </td>
+                                    <td>
+                                        $<span ng-bind="form_data.amt_total_payment"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Invoice Detail -->
+					<div class="payment-summary col-sm-12" ng-show="paymentSuccess">
+						<div class="summary-title full-wid clearfix">
+                            <div style="width: 90%; margin: auto;">
+                                <h4 class="fl">Invoice Details</h4>
+                                <h4 class="fr">#{{invoice_id}}</h4>
+                            </div>
+						</div>
+						<div class="summary-content">
+							<table id="invoice-table" style="width: 90%; margin: auto;">
+								<tr>
+                                    <th width="5%">
+                                        <i class="fa fa-plus" ng-click="invoice_extend = true" ng-hide="invoice_extend"></i>
+                                        <i class="fa fa-minus" ng-click="invoice_extend = false" ng-show="invoice_extend"></i>
+                                    </th>
+									<th style="width: 65%;">
+										<span ng-hide="invoice_extend">{{invoice_status}}</span>
+                                        <span ng-show="invoice_extend">Description</span>
+									</th>
+									<th style="width: 30%;">
+                                        <span ng-show="invoice_extend">Amount</span>
+                                        <span ng-bind="form_data.amt_total_payment" ng-hide="invoice_extend"></span>
+                                        <span ng-hide="invoice_extend">$</span>
+                                    </th>
+								</tr>
+                                <tr ng-show="invoice_extend">
+                                    <td></td>
+                                    <td>{{form_data.description}}</td>
+                                    <td>$ {{form_data.amt_total_payment}}</td>
+                                </tr>
+                                <tr ng-show="invoice_extend">
+                                    <td></td>
+                                    <td>Additional Charges</td>
+                                    <td>$ 0.00</td>
+                                </tr>
+                                <tr ng-show="invoice_extend">
+                                    <td></td>
+                                    <td>
+                                        {{invoice_status}}
+                                    </td>
+                                    <td>
+                                        $ {{form_data.amt_total_payment}}
+                                    </td>
+                                </tr>
+                            </table>
+						</div>
+					</div>
+
+					<!-- alert boxes -->
+					<div class="col-sm-12 mt-30" ng-show="paymentSuccess">
+						<div style="background: #f8f8f8; padding: 50px 0 25px;">
+							<div style=" width: 80%; margin: auto;">
+								<div class="alert-success-box full-wid">
+									<i class="fa fa-check-square" aria-hidden="true"></i>
+									<span>Payment Success</span>
+								</div>
+								<div class="receipt-box full-wid">
+									<div>
+										<p>Name: {{ form_data.first_name }} {{form_data.last_name}}</p>
+										<p>Description: {{form_data.description}}</p>
+										<p>Amount: ${{form_data.amt_total_payment}}</p>
+										<p>Account: **** ***** {{form_data.card_number.slice(-4)}}</p>
+										<a href="#">
+											<button class="btn btn-navy" style="float: none">Next Step</button>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+                    <!-- Payment Information -->
+					<form class="col-sm-12 mt-30" id="payment_form" ng_hide="paymentSuccess">
+						<div class="payment-info clearfix">
+                            <div class="col-md-10 col-md-offset-1 col-sm-12">
+                                <section>
+                                    <div class="alert-box full-wid" ng-show = "paymentError">
+                                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                                        <span>{{ message }}</span>
+                                    </div>
+                                    <div class="payby">
+                                        <p>Pay by</p>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-blue" ng-click="credit_card_active = true; ach_active = false" ng-class="{'btn-active': credit_card_active}">
+                                            Credit Card
+                                        </button>
+                                        <button class="btn btn-blue" ng-click="credit_card_active = false; ach_active = true" ng-class="{'btn-active': ach_active}">
+                                            ACH
+                                        </button>
+                                    </div>
+                                    <div class="row plr-15">
+                                        <h4>
+                                            Payment Information
+                                        </h4>
+                                        <div class="card-logos mp-logos">
+                                            <img src="resources/img/americanExpress.png" />
+                                            <img src="resources/img/discover.png" />
+                                            <img src="resources/img/mastercard.png" />
+                                            <img src="resources/img/visa.png" />
+                                        </div>
+                                    </div>
+                                    <!-- Credit Card -->
+                                    <div ng-show="credit_card_active">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-12 mobile-input"><input class="full-wid" placeholder="First Name" ng-model="form_data.first_name" /></div>
+                                                <div class="col-md-6 col-sm-12"><input class="full-wid" placeholder="Last Name" ng-model="form_data.last_name" /></div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <input class="full-wid" placeholder="Card Number" ng-model="form_data.card_number" />
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-md-4">
+                                                    <select class="full-wid form-control mobile-input" placeholder='Month' ng-model='form_data.month'>
+                                                        <option value=''>Month</option>
+                                                        <option value='01'>1</option>
+                                                        <option value='02'>2</option>
+                                                        <option value='03'>3</option>
+                                                        <option value='04'>4</option>
+                                                        <option value='05'>5</option>
+                                                        <option value='06'>6</option>
+                                                        <option value='07'>7</option>
+                                                        <option value='08'>8</option>
+                                                        <option value='09'>9</option>
+                                                        <option value='10'>10</option>
+                                                        <option value='11'>11</option>
+                                                        <option value='12'>12</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-12 col-md-4">
+                                                    <select class="full-wid form-control mobile-input" placeholder='Year' ng-model='form_data.year'>
+                                                        <option value=''>Year</option>
+                                                        <option value='2016'>2016</option>
+                                                        <option value='2017'>2017</option>
+                                                        <option value='2018'>2018</option>
+                                                        <option value='2019'>2019</option>
+                                                        <option value='2020'>2020</option>
+                                                        <option value='2021'>2021</option>
+                                                        <option value='2022'>2022</option>
+                                                        <option value='2023'>2023</option>
+                                                        <option value='2024'>2024</option>
+                                                        <option value='2025'>2025</option>
+                                                        <option value='2026'>2026</option>
+                                                        <option value='2027'>2027</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-12 col-md-4"><input class="full-wid" placeholder="CVV" ng-model="form_data.cvv" /></div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-md-6 mobile-input"><input class="full-wid" placeholder="Email Address" ng-model="form_data.email_address" /></div>
+                                                <div class="col-sm-12 col-md-6 mobile-input"><input class="full-wid" placeholder="Postal Code" ng-model="form_data.postal_code" /></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- ACH -->
+                                    <div ng-show="ach_active">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-md-6 mobile-input" ><input class="full-wid" placeholder="First Name" ng-model="form_data.first_name" /></div>
+                                                <div class="col-sm-12 col-md-6" ><input class="full-wid" placeholder="Last Name" ng-model="form_data.last_name" /></div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <input class="full-wid" placeholder="Account Number" ng-model="form_data.account_number"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-md-6 mobile-input" ><input class="full-wid" placeholder="Routing Number" ng-model="form_data.routing_number"/></div>
+                                                <div class="col-sm-12 col-md-6" ><input class="full-wid" placeholder="Bank Name" ng-model="form_data.bank_name"/></div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-md-6">
+                                                    <select class="full-wid form-control mobile-input" ng-model='form_data.account_type'>
+                                                        <option value=''>Account Type</option>
+                                                        <option value='Checking'>Checking</option>
+                                                        <option value='Saving'>Saving</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6">
+                                                    <select class="full-wid form-control" ng-model='form_data.account_subtype'>
+                                                        <option value=''>Account Subtype</option>
+                                                        <option value='Personal'>Personal</option>
+                                                        <option value='Business'>Business</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-md-6 mobile-input"><input class="full-wid" placeholder="Email Address" ng-model="form_data.email_address" /></div>
+                                                <div class="col-sm-12 col-md-6 mobile-input"><input class="full-wid" placeholder="Postal Code" ng-model="form_data.postal_code" /></div>
+                                            </div>
+                                        </div>
+                                        <input type="checkbox" ng-model="ach_agreement"/>
+                                        <span>&nbsp;&nbsp;I agree to the <a href="#" ng-click="ach = true">ACH Disclosure</a></span>
+                                    </div>
+                                    <!-- <button class="btn btn-navy">SAVE & CONTINUE</button> -->
+                                </section>
+                                <section class="clearfix">
+                                    <h4>
+                                        <i class="fa {{showBillingBox ? 'fa-minus' : 'fa-plus'}}" ng-click='toggleShow("showBillingBox")'></i>
+                                        Billing Information
+                                    </h4>
+                                    <div ng-show="showBillingBox">
+                                        <div class="form-group">
+                                            <input class="full-wid" placeholder="Address" ng-model="form_data.address" />
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-md-6 mobile-input"><input class="full-wid" placeholder="City" ng-model="form_data.city" /></div>
+                                                <div class="col-sm-12 col-md-6"><input class="full-wid" placeholder="State" ng-model="form_data.state" /></div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="full-wid"><input class="full-wid" placeholder="Phone #" ng-model="form_data.phone" /></div>
+                                        </div>
+                                    </div>
+                                    <!-- <button class="btn btn-navy">SAVE & CONTINUE</button> -->
+                                </section>
+                                <section class="clearfix">
+                                    <label >
+                                        <input type="checkbox" ng-model='form_data.is_recurring' ng-checked='form_data.is_recurring' />&nbsp;&nbsp;
+                                        <span class="navy">I want to set up automatic payment</span>
+                                    </label>
+                                    <div ng-show='form_data.is_recurring'>
+                                        <!-- <div class="form-group clearfix">
+                                            <label class="navy flt-l col-sm-2">Amount: &nbsp;&nbsp;</label>
+                                            <div class="flt-l">
+                                                <input type="" placeholder="" ng-model="amt_first_pay"/>
+                                                <p><small>The amount above will be processed immediately</small></p>
+                                            </div>
+                                        </div> -->
+                                        <div class="form-group clearfix">
+                                            <label class="navy fl col-sm-2">Method: &nbsp;&nbsp;</label>
+                                            <div class="fl">
+                                                <div class="">
+                                                    <label>
+                                                        <input type="radio" name="payment_method" value='days' ng-model='form_data.payment_method'>
+                                                        <small style="font-weight:normal;">Pay once every &nbsp;
+                                                            <select ng-model="form_data.schedule_frequency">
+                                                                <option value='30'>30</option>
+                                                                <option value='90'>90</option>
+                                                            </select> &nbsp;days
+                                                        </small>
+                                                    </label>
+                                                </div>
+                                                <div class="">
+                                                    <label>
+                                                        <input type="radio" name="payment_method" value='month' ng-model='form_data.payment_method'>
+                                                        <small style="font-weight:normal;">Payment per month</small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix" ng-show='form_data.payment_method == "month"'>
+                                            <label class="navy fl col-sm-2">Day: &nbsp;&nbsp;</label>
+                                            <div class="fl">
+                                                <select ng-model="form_data.schedule_day">
+                                                    <option value='1'>1</option>
+                                                    <option value='2'>2</option>
+                                                    <option value='3'>3</option>
+                                                    <option value='4'>4</option>
+                                                    <option value='5'>5</option>
+                                                    <option value='6'>6</option>
+                                                    <option value='7'>7</option>
+                                                    <option value='8'>8</option>
+                                                    <option value='9'>9</option>
+                                                    <option value='10'>10</option>
+                                                    <option value='11'>11</option>
+                                                    <option value='12'>12</option>
+                                                    <option value='13'>13</option>
+                                                    <option value='14'>14</option>
+                                                    <option value='15'>15</option>
+                                                    <option value='16'>16</option>
+                                                    <option value='17'>17</option>
+                                                    <option value='18'>18</option>
+                                                    <option value='19'>19</option>
+                                                    <option value='20'>20</option>
+                                                    <option value='21'>21</option>
+                                                    <option value='22'>22</option>
+                                                    <option value='23'>23</option>
+                                                    <option value='24'>24</option>
+                                                    <option value='25'>25</option>
+                                                    <option value='26'>26</option>
+                                                    <option value='27'>27</option>
+                                                    <option value='28'>28</option>
+                                                    <option value='29'>29</option>
+                                                    <option value='30'>30</option>
+                                                </select>
+                                                <p><small>Please choose day of month your recurring payments will be collected</small></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix">
+                                            <label class="navy fl col-sm-2">Duration: &nbsp;&nbsp;</label>
+                                            <div class="fl half-wid">
+                                                <select ng-model="form_data.duration">
+                                                    <option value='3'>3</option>
+                                                    <option value='6'>6</option>
+                                                    <option value='9'>9</option>
+                                                    <option value='12'>12</option>
+                                                    <option value='24'>24</option>
+                                                    <option value='-1'>No limit</option>
+                                                </select>
+                                                <p><small>Please choose how many times to pay</small></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <button class="btn btn-navy">SAVE & CONTINUE</button> -->
+                                </section>
+                                <section>
+                                    <label style="padding-left: 5px;">
+                                    <input type="checkbox" ng-model="agreement"/>
+                                    <span>&nbsp;&nbsp;I agree to the <a href="#" ng-click="termsConditions = true">Terms & Conditions</a> and <a href="#" ng-click="returnPolicy = true">Return Policy</a></span>
+                                    </label>
+                                </section>
+                                <section>
+                                    <input type="hidden" ng-model="form_data.amt_total_payment" />
+                                    <button class="btn btn-navy full-wid submit-btn" ng-click="submit()" ng-disabled="!(agreement && (!ach_active || ach_agreement))">{{btn_html}}</button>
+                                </section><!-- The Modal -->
+                                <div class="modal" ng-class="{'term-display': termsConditions}">
+                                    <div class="modal-content">
+                                        <h3>Terms & Conditions</h3>
+                                        <object width="100%" height="100%" data="{{termsConditionsURL}}"></object>
+                                        <button class="btn btn-navy" style="float: none; margin-top: 25px" ng-click="termsConditions = false">Return</button>
+                                    </div>
+                                </div>
+                                <div class="modal" ng-class="{'term-display': returnPolicy}">
+                                    <div class="modal-content">
+                                        <h3>Return Policy</h3>
+                                        <object width="100%" height="100%" data="{{returnPolicyURL}}"></object>
+                                        <button class="btn btn-navy" style="float: none; margin-top: 25px" ng-click="returnPolicy = false">Return</button>
+                                    </div>
+                                </div>
+                                <div class="modal" ng-class="{'term-display': ach}">
+                                    <div class="modal-content">
+                                        <h3>Return Policy</h3>
+                                        <object width="100%" height="100%" data="{{achURL}}"></object>
+                                        <button class="btn btn-navy" style="float: none; margin-top: 25px" ng-click="ach = false">Return</button>
+                                    </div>
+                                </div>
+                            </div>
+						</div>
+
+					</form>
+				</div>
+			</div>
+            <a href="#" class="mt-30 fr">
+                <h4>< Go Back</h4>
+            </a>
+		</div>
+	</main>
+</body>
+</html>

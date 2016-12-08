@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myHOApay</title>
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./resources/css/style.css" />
+    <link rel="stylesheet" href="./resources/font/flaticon.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <script type="text/javascript" src="//cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+    <script type="text/javascript" src="./resources/js/common.js"></script>
+    <script type="text/javascript" src="./resources/js/auto_pay.js"></script>
+</head>
+<body ng-app="paymentPage">
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8">
+                <img src="./resources/img/myHOApay_white_letters.png" width="100%" />
+            </div>
+        </div>
+    </div>
+</header>
+
+<main ng-controller='autoPay'>
+    <div class="container">
+        <nav>
+            <div class="row text-center">
+                <div class="col-sm-4">
+                    <a href="./index.html"><i class="flaticon-commerce"></i>&nbsp;&nbsp;&nbsp;MAKE A PAYMENT</a>
+                </div>
+                <div class="col-sm-4">
+                    <a href="./paymentPlan.html"><i class="flaticon-school"></i>&nbsp;&nbsp;&nbsp;SET UP PAYMENT PLAN</a>
+                </div>
+                <div class="col-sm-4 active">
+                    <a href="./autoPay.html"><i class="flaticon-clock"></i>&nbsp;&nbsp;&nbsp;MANAGE AUTOPAY</a>
+                    <img src="./resources/img/arrow-down.png" />
+                </div>
+            </div>
+            <!--<ul class="clearfix">
+                <li>
+                    <a href="./index.html"><i class="flaticon-commerce"></i>&nbsp;&nbsp;&nbsp;MAKE A PAYMENT</a>
+
+                </li>
+                <li class="active">
+                    <a href="./autoPay.html"><i class="flaticon-clock"></i>&nbsp;&nbsp;&nbsp;MANAGE AUTOPAY</a>
+                    <img src="./resources/img/arrow-down.png" />
+                </li>
+                <li>
+                    <a href="./paymentPlan.html"><i class="flaticon-school"></i>&nbsp;&nbsp;&nbsp;SET UP PAYMENT PLAN</a>
+                </li>
+            </ul>-->
+        </nav>
+
+        <section>
+            <table class="autopay">
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Debit Day</th>
+                </tr>
+                <tr ng-repeat="auto_pay in auto_pay_data | orderBy: '-recent_payment_day'">
+                    <td>{{auto_pay.description}}</td>
+                    <td>{{auto_pay.amount | currency}}</td>
+                    <td>{{auto_pay.recent_payment_day}}</td>
+                </tr>
+            </table>
+        </section>
+        <!-- <section>
+            <table class="autopay">
+                <tr>
+                    <th>Amount</th>
+                    <th>Debit Day</th>
+                </tr>
+                <tr>
+                    <td>$10,000.00</td>
+                    <td>Oct 17, 2016</td>
+                </tr>
+            </table>
+        </section> -->
+
+        <!--a class="new-autopay navy" style="margin-top: 30px;display:inline-block;" href="/index.html?recurring=true">Create New Autopay</a-->
+
+    </div>
+
+</main>
+</body>
+</html>
